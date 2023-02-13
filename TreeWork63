@@ -1,0 +1,57 @@
+//Дано бинарное дерево, в общем случае не являющееся деревом поиска.
+//Написать процедуру, которая формирует массив, содержащий вершины,
+//находящиеся на уровне N, перечисляя их слева направо.С помощью этой
+//процедуры сформировать текстовый файл, в котором по уровням "распечатать"
+//содержимое дерева : в первой строке - корень, во второй строке - потомки корня,
+//и т.д.в каждой очередной строке - прямые потомки для вершин, выведенных в
+//предыдущей строке.Числа в каждой строке разделять ровно одним пробелом,
+//после последнего в строке числа пробел не ставить.После последней строки
+//в файле не вставлять символы "новая строка" и "возврат каретки".
+
+#include <fstream>
+#include <string>
+#include "pt4.h"
+
+using namespace std;
+
+
+
+string st = "";
+void OutH(PNode Tree, int height, int n) {
+	if (height == n) {
+		st += to_string(Tree->Data) + " ";
+	}
+	if (height < n) {
+		if (Tree->Left != nullptr)
+			OutH(Tree->Left, height + 1, n);
+		if (Tree->Right != nullptr)
+			OutH(Tree->Right, height + 1, n);
+	}
+}
+
+int maxHeight = 0;
+void HeightTree(PNode Tree, int height) {
+	if (Tree->Left == nullptr && Tree->Right == nullptr && maxHeight < height) maxHeight = height;
+	if (Tree->Left != nullptr)
+		HeightTree(Tree->Left, height + 1);
+	if (Tree->Right != nullptr)
+		HeightTree(Tree->Right, height + 1);
+}
+
+void Solve() {
+    Task("TreeWork63");
+	PNode Tree;
+	string s;
+	pt >> Tree;
+	pt >> s;
+	ofstream f;
+	f.open(s.c_str(), ios::out);
+	HeightTree(Tree, 1);
+	for (int i = 1; i <= maxHeight; i++) {
+		st = "";
+		OutH(Tree, 1, i);
+		st.erase(st.length() - 1, 1);
+		f << st << endl;
+	}
+	f.close();
+}
